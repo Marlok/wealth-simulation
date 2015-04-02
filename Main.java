@@ -18,7 +18,7 @@
   
 public class Main {
 
-
+	public static int ticks = 0;
 	public static int MAX_GRAIN = 0; /* maximum amount any patch can hold */			
 	public static int GINI_INDEX_RESERVE = 0;		
 	public static int LORENZ_POINTS = 0;
@@ -39,7 +39,7 @@ public class Main {
     public static void main(String[] args) {
     	Main start = new Main();
     	
-    	final int PEOPLE = 3; 				// (2-1000)
+    	final int PEOPLE = 30; 				// (2-1000)
     	Person.vision_max = 5;				// (1-15)
     	Person.metabolism_max = 10;			// (1-25)
     	Person.life_expectancy_min = 1; 	// (1-100)
@@ -47,22 +47,42 @@ public class Main {
 
     	Location.grain_grow_interval = 1;	// (1-10)
 		Location.num_grain_grown = 1;	// (1-10);
-    	start.start(PEOPLE);
+    	start.start(PEOPLE, 3,5);
     	 
     }
 
-    public void start (int numPeople){
+    public void start (int numPeople, int numColumns, int numRows ){
     	Person[] all_People = new Person[numPeople];
+    	Location[][] all_Location = 
+    				new Location[numColumns][numRows];
 
 	    for(int i = 0 ; i < all_People.length ; i++){
 	      all_People[i] = new Person();
 	    }   
 
+	    for(int i = 0 ; i < numColumns ; i++){
+	    	for(int j = 0 ; j < numRows ; j++){
+	      		all_Location[i][j] = new Location(); 
+	    	} 
+	    } 
+
 	    for(Person p: all_People){
-	      System.out.println(p.life_expectancy); 
+	    	int randCol = randomInt(0,numColumns-1);
+	    	int randRow = randomInt(0,numRows-1);
+	    	all_Location[randCol][randRow].addPerson(p);
+	    	System.out.println(randCol +", "+randRow ); 
 	    }
 	}
 
+	public void update(){
+		ticks = ticks + 1;
+	}
+
+
+	public int randomInt( int min, int max){
+        int range = max-min;
+        return (int)(Math.random()*(range+1)+min);
+    }
 }
 
 
