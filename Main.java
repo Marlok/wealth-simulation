@@ -23,6 +23,7 @@ public class Main {
 	public static int GINI_INDEX_RESERVE = 0;		
 	public static int LORENZ_POINTS = 0;
 	public static double percent_best_land;
+	public static int grain_grow_interval;
 
 	public static Location[][] all_Location; 
 	public static Person[] all_People; 
@@ -44,15 +45,15 @@ public class Main {
 	*/
 
     public static void main(String[] args) {
-    	int PEOPLE = 250; 				// (2-1000)
+    	int PEOPLE = 100; 				// (2-1000)
     	Person.vision_max = 5;				// (1-15)
     	Person.metabolism_max = 15;			// (1-25)
     	Person.life_expectancy_min = 1; 	// (1-100)
     	Person.life_expectancy_max = 83;	// (1-100)
     	percent_best_land = 10;				// (5% - 25%)
 
-    	Location.grain_grow_interval = 1;	// (1-10)
-		Location.num_grain_grown = 4;		// (1-10);
+    	grain_grow_interval = 2;	// (1-10)
+		Location.num_grain_grown = 1;		// (1-10);
     	//start.start(PEOPLE, 3,5);
 
 		//System.out.println(move_Left(Integer.parseInt(args[0]), Integer.parseInt(args[1]))); 
@@ -61,62 +62,37 @@ public class Main {
 		String strPoor="";
 		String strMiddle="";
 		String strRich="";
+		String max="";
+	
 
 		setupLocations(NUM_COLUMNS, NUM_ROWS);
 		setupPersons(PEOPLE);
-		
-		
-
-		int poor=0;
-		int middle=0;
-		int rich=0;
-
-		for(Person p: all_People){
-    		if (p.wealth > (2.0*50/3)){
-    			rich++;
-    		}else{
-    			if (p.wealth > (1.0*50/3)){
-    				middle++;
-    			}else{
-    				poor++;
-    			}
-    		}
-    	}
-    	strPoor=""+rich;
-		strMiddle=""+middle;
-		strRich=""+poor;
-
 		for (int i =0;i<100;i++){
-			update();
-			System.out.println("-------------------------------------"); 
-			//printAllLocations();
-			poor=0;
-			middle=0;
-			rich=0;
-
-			for(Person p: all_People){
-	    		if (p.wealth > (2.0*Person.max_wealth_now/3)){
+    		update();
+    		int rich = 0;
+			int poor = 0;
+			int middle = 0;
+    		for(Person p: all_People){
+	    		if (p.myClass == 'r'){
 	    			rich++;
-	    		}else{
-	    			if (p.wealth > (1.0*Person.max_wealth_now/3)){
-	    				middle++;
-	    			}else{
-	    				poor++;
-	    			}
+	    		}
+	    		if (p.myClass == 'm'){
+	    			middle++;
+	    		}
+	    		if (p.myClass == 'p'){
+	    			poor++;
 	    		}
 	    	}
-	    	Person.min_wealth_now = Person.max_wealth_now;
-	    	Person.max_wealth_now = 0;
-	    	System.out.println(rich+" "+middle+" "+poor+"= "+(rich+middle+poor));
-	    	strPoor+= ","+poor;
-			strMiddle+= ","+middle;
-			strRich+= ","+rich;
-		}
-		savetoFile(strPoor, "poor");
-		savetoFile(strMiddle, "middle");
-		savetoFile(strRich, "rich");
-		
-    	 
+	    	strPoor += poor + ",";
+			strMiddle += middle + ",";
+			strRich += rich + ",";
+    	}
+
+		savetoFile(strPoor.substring(0, strPoor.length()-1), "poor");
+		savetoFile(strMiddle.substring(0, strMiddle.length()-1), "middle");
+		savetoFile(strRich.substring(0, strRich.length()-1), "rich");
+		//savetoFile(max, "max");
+
     }
 
     public static void savetoFile(String text, String name){
@@ -132,20 +108,27 @@ public class Main {
 
 
     public static void update(){
-
+    	for(Person p: all_People){
+	    	p.updateLocation(all_Location);
+	    }
     	for(int i = 0 ; i < NUM_COLUMNS ; i++){
 	    	for(int j = 0 ; j < NUM_ROWS ; j++){
 	      		all_Location[i][j].harvest();
 	    	} 
 	    } 
 	    for(Person p: all_People){
-	    	p.updateLocation(all_Location);
+	    	p.Update();
 	    }
-	    for(int i = 0 ; i < NUM_COLUMNS ; i++){
-	    	for(int j = 0 ; j < NUM_ROWS ; j++){
-	      		all_Location[i][j].grow_grain(ticks);
-	    	} 
-	    }
+
+	    Person.updateClass(all_People);
+
+	    if (( ticks % grain_grow_interval) == 0){
+			for(int i = 0 ; i < NUM_COLUMNS ; i++){
+	    		for(int j = 0 ; j < NUM_ROWS ; j++){
+	      			all_Location[i][j].grow_grain();
+	    		} 
+	    	}
+		}
 		ticks = ticks + 1;
 	}
 
@@ -162,7 +145,6 @@ public class Main {
 	    for(Person p: all_People){
 	    	p.col = randomInt(0,NUM_COLUMNS-1);
 	    	p.row = randomInt(0,NUM_ROWS-1);
-	    	all_Location[p.col][p.row].addPerson(p);
 	    	//System.out.println(randCol +", "+randRow ); 
 	    }
 	}
@@ -327,6 +309,7 @@ public class Main {
 
     public static void printAllLocations(){
     	// print the value of grains in a grid.
+		System.out.println("-----------------------------"); 
 		String oneRow ="";
 		int number;
 		String format ="";

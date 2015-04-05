@@ -40,16 +40,14 @@ public class Location {
 	public ArrayList<Person> list_persons;	
 							  	// List of the persons in the current location.
 
-	public void grow_grain(int ticks){
+	public void grow_grain(){
 		// if a patch does not have it's maximum amount of grain, add
   		// num-grain-grown to its grain amount, not more then maxi_grain
-  		if (( ticks % grain_grow_interval) == 0){
-			if (grains_here < max_grain_here){
-  				grains_here = grains_here + num_grain_grown;
-  				if (grains_here > max_grain_here){
-  					grains_here = max_grain_here;
-  				}
-  			}
+		if (grains_here < max_grain_here){
+			grains_here = grains_here + num_grain_grown;
+			if (grains_here > max_grain_here){
+				grains_here = max_grain_here;
+			}
 		}
 
 	}
@@ -63,7 +61,6 @@ public class Location {
 			int wealthHarvest = (int)(grains_here/list_persons.size());
 			for(Person p: list_persons){
 	      		p.add_wealth(wealthHarvest); 
-	      		p.Update();
 	      	}
 	    	grains_here = 0;
 	    	removeAllPersons();
@@ -72,12 +69,10 @@ public class Location {
 
 	public void addPerson (Person toAdd){
 	// Add a person to this location
-
 		list_persons.add(toAdd);
 	}
 	public void removeAllPersons(){
 	// Remove all the persons from this location
-
 		list_persons.clear();
 	}
 

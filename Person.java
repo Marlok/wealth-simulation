@@ -54,9 +54,6 @@ public class Person {
     public static int metabolism_max = 10;           // (1-25)
     public static int vision_max = 5;               // (1-15)
 
-    public static int max_wealth_now = 0;
-    public static int min_wealth_now = 50;
-
     public int col;
     public int row;
 
@@ -69,10 +66,13 @@ public class Person {
     public int metabolism;      //How much grains this person needs to eat.
     public int vision;          //How far this person can look for grains. 
 
+    public char myClass;        // p = poor, r = rich, m = middle
+
 // methods { isDead( ), updateWealthWith(float), getWealth()}
 
     public Person(){
         set_variables();
+        age = randomInt(0,life_expectancy);
     }
 
     public void updateLocation(Location[][] all_Location ){
@@ -107,10 +107,6 @@ public class Person {
         }
     }
 
-    public void reset_variables(){
-        set_variables();
-        wealth = randomInt(min_wealth_now,max_wealth_now);
-    }
 
     public void set_variables(){
         //reset parameters
@@ -119,6 +115,27 @@ public class Person {
         metabolism = randomInt(1,metabolism_max);
         wealth = randomInt(metabolism, 50);
         vision = randomInt(1,vision_max);
+    }
+
+    public static void updateClass(Person[] all_People){
+        // return the maximun wealth of a person on a list
+        int max_wealth_now = 0;
+        for(Person p: all_People){
+                if (max_wealth_now<p.wealth){
+                    max_wealth_now = p.wealth;
+                }
+        }
+        for(Person p: all_People){
+            if (p.wealth <= max_wealth_now/3){
+                p.myClass = 'p';
+            }else{
+                if (p.wealth <= max_wealth_now*2/3){
+                    p.myClass = 'm';
+                }else{
+                    p.myClass = 'r';
+                }
+            }
+        }  
     }
 
 
@@ -131,13 +148,7 @@ public class Person {
         wealth = wealth - metabolism;
         age = age + 1 ; 
         if (age >= life_expectancy || wealth < 0) { // Checking if is Dead                                            
-            reset_variables();                     // Reset parameters
-        }else{
-            if (max_wealth_now < wealth){ 
-                max_wealth_now = wealth;
-            }else if (min_wealth_now > wealth){
-                min_wealth_now = wealth;
-            }
+            set_variables();                     // Reset parameters
         }
     }
 
