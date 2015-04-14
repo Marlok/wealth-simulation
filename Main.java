@@ -17,8 +17,9 @@
  *************************************************************************/
 import java.io.*;
 public class Main {
-
+	public static int PEOPLE;
 	public static int ticks = 0;
+	public static int numOfTicks = 0;
 	public static int MAX_GRAIN = 50; /* maximum amount any patch can hold */			
 	public static int GINI_INDEX_RESERVE = 0;		
 	public static int LORENZ_POINTS = 0;
@@ -45,29 +46,64 @@ public class Main {
 	*/
 
     public static void main(String[] args) {
-    	int PEOPLE = 100; 				// (2-1000)
-    	Person.vision_max = 5;				// (1-15)
-    	Person.metabolism_max = 15;			// (1-25)
-    	Person.life_expectancy_min = 1; 	// (1-100)
-    	Person.life_expectancy_max = 83;	// (1-100)
-    	percent_best_land = 10;				// (5% - 25%)
+    	if (args.length ==  0) {
+    		System.out.println((char)27 + "[32mRunning with default "+
+    									   "parameters ... "+ (char)27 + "[0m");
 
-    	grain_grow_interval = 2;	// (1-10)
-		Location.num_grain_grown = 1;		// (1-10);
-    	//start.start(PEOPLE, 3,5);
+	    	PEOPLE = 250; 						// (2-1000)
+	    	Person.vision_max = 5;				// (1-15)
+	    	Person.metabolism_max = 15;			// (1-25)
+	    	Person.life_expectancy_min = 1; 	// (1-100)
+	    	Person.life_expectancy_max = 83;	// (1-100)
+	    	percent_best_land = 10;				// (5% - 25%)
 
-		//System.out.println(move_Left(Integer.parseInt(args[0]), Integer.parseInt(args[1]))); 
-		//setupLocations (NUM_ROWS, NUM_COLUMNS);
+	    	grain_grow_interval = 1;			// (1-10)
+			Location.num_grain_grown = 4;		// (1-10);
+
+			numOfTicks = 1000;
+
+    	} else{
+    		if (args.length == 9){
+    			System.out.println((char)27 + "[31mRunning with parameters "+
+    									 "defined by user.."+ (char)27 + "[0m");
+
+    			PEOPLE = Integer.parseInt(args[0]); 	
+		    	Person.vision_max = Integer.parseInt(args[1]);		   
+		    	Person.metabolism_max = Integer.parseInt(args[2]);	   
+		    	Person.life_expectancy_min = Integer.parseInt(args[3]);
+		    	Person.life_expectancy_max = Integer.parseInt(args[4]);
+		    	percent_best_land = Integer.parseInt(args[5]);		
+
+		    	grain_grow_interval = Integer.parseInt(args[6]);			
+				Location.num_grain_grown = Integer.parseInt(args[7]);		
+
+				numOfTicks = Integer.parseInt(args[8]);
+    		}else{
+    			System.out.println((char)27 + "[31mError in the number of "+
+    				                           "parameters" + (char)27 + "[0m");
+    			
+    			System.out.println("Use java Main #People #vision_max "+ 
+    				"#life_expectancy_min #life_expectancy_max "+
+    				"#percent_best_land #grain_grow_interval + #Ticks_to_Run ");
+    			return;
+    		}
+    	}
+
+	
+		System.out.println("Setting up grains on the grid");
+		setupLocations(NUM_COLUMNS, NUM_ROWS);
+		System.out.println("Locating starting point of people on the grid");
+		setupPersons(PEOPLE);
+
 
 		String strPoor="";
 		String strMiddle="";
 		String strRich="";
 		String max="";
 	
+		System.out.println("Running simulation..."); 
 
-		setupLocations(NUM_COLUMNS, NUM_ROWS);
-		setupPersons(PEOPLE);
-		for (int i =0;i<100;i++){
+		for (int i =0;i<numOfTicks;i++){
     		update();
     		int rich = 0;
 			int poor = 0;
@@ -88,10 +124,16 @@ public class Main {
 			strRich += rich + ",";
     	}
 
+    	System.out.println((char)27 + "[32mSimulation completed. Saving..."+
+    		(char)27 + "[0m"); 
+
 		savetoFile(strPoor.substring(0, strPoor.length()-1), "poor");
 		savetoFile(strMiddle.substring(0, strMiddle.length()-1), "middle");
 		savetoFile(strRich.substring(0, strRich.length()-1), "rich");
-		//savetoFile(max, "max");
+		
+		System.out.println((char)27 + "[34mFiles with the amount of poor, "+
+			    "middle, and rich have been created, plot with Matlab with "+
+			    "the script Matlab/wealthPlot.m"+(char)27 + "[0m"); 
 
     }
 
