@@ -24,19 +24,21 @@ The program accept initial parameters for:
 
 
 
-I. File list
+File list
 ------------
-makefile			Compile all the needed clases to use
-Main.jave			Main model
-Location.java		Class with methods and information for each location 
-Person.java			Class with methods and information for each person
+ * 	makefile			Compile all the needed clases to use
+ *	Main.jave			Main model
+ *	Location.java		Class with methods and information for each location 
+ *	Person.java			Class with methods and information for each person
 
 
 Program can be built using 
+------------
 
 % make
 
 Program is run with 
+------------
 
   % java Main
 
@@ -49,7 +51,7 @@ Program is run with
  % java Main 250 5 15 1 83 10 4 10 1000
 
 
-
+------------
 This program follow the NetLogo model for Wealth Distribution with Copyright 
 1998 Uri Wilensky.
 
