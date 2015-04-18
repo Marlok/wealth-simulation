@@ -5,6 +5,7 @@
  *  Have the information of a Person: age, wealth, life_expectacy, metabolism
  *  vision. When Update is called, age get older metabolism consume wealth. 
  *
+ *  Example 
  *  % java Person
  *  
  * Create 1 person
@@ -68,14 +69,29 @@ public class Person {
 
     public char myClass;        // p = poor, r = rich, m = middle
 
-// methods { isDead( ), updateWealthWith(float), getWealth()}
+
 
     public Person(){
+        // Inital values generated for each person 
+
         set_variables();
         age = randomInt(0,life_expectancy);
     }
 
+    public void Update(){
+    // method to consume wealth and reset if the person is dead
+
+        wealth = wealth - metabolism;
+        age = age + 1 ; 
+        if (age >= life_expectancy || wealth < 0) { // Checking if is Dead                                            
+            set_variables();                        // Reset parameters
+        }
+    }
+
     public void updateLocation(Location[][] all_Location ){
+        // Method determinates the best next location for a person 
+        // depending on their vision
+
         int gRight = 0;
         int gLeft = 0;
         int gUp = 0;
@@ -118,13 +134,20 @@ public class Person {
     }
 
     public static void updateClass(Person[] all_People){
-        // return the maximun wealth of a person on a list
+        // Add a class to each person on an array, depending on ther current 
+        // wealth. For that first gets the wealthiest person/
+        
         int max_wealth_now = 0;
         for(Person p: all_People){
                 if (max_wealth_now<p.wealth){
                     max_wealth_now = p.wealth;
                 }
         }
+
+        // if the person owns less then 1/3 of the weathiest one then is poor
+        // if the person owns between 1/3 and 2/3 of the wealthiest is middle
+        // if the person owns more than 2/3 of the wealthies is rich
+
         for(Person p: all_People){
             if (p.wealth <= max_wealth_now/3){
                 p.myClass = 'p';
@@ -136,28 +159,26 @@ public class Person {
                 }
             }
         }  
-    }
 
-
-    public int randomInt( int min, int max){
-        int range = max-min;
-        return (int)(Math.random()*(range+1)+min);
-    }
-
-    public void Update(){
-        wealth = wealth - metabolism;
-        age = age + 1 ; 
-        if (age >= life_expectancy || wealth < 0) { // Checking if is Dead                                            
-            set_variables();                     // Reset parameters
-        }
     }
 
     public void add_wealth (int wealth_optained){
+        // method to add wealth from the harvest
         wealth += wealth_optained;
     }
 
 
+    public int randomInt( int min, int max){
+        // Generates a random int between min and max including both
+        int range = max-min;
+        return (int)(Math.random()*(range+1)+min);
+    }
+
+
+
     public static void main(String[] args) {
+        // main class for testing
+
         System.out.println("Create 1 person");
         System.out.println("-----------------------------------------");
         Person per1 = new Person();

@@ -26,6 +26,7 @@
  *	Removing all persons from location_1
  *	Persons in location_1: 0
  *	
+ *
  *************************************************************************/
 
 import java.util.ArrayList;

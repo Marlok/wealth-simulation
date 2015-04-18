@@ -1,22 +1,60 @@
 /*************************************************************************
  *  Compilation:  javac Main.java
  *  Execution:    java Main
+ *  Execution:    java Main #People #vision_max  #metabolism_max 
+ *						#life_expectancy_min #life_expectancy_max 
+ *						#percent_best_land #grain_grow_interval 
+ *						#Ticks_to_Run
  *
- *  Prints "Hello, World". By tradition, this is everyone's first program.
+ *  
+ *  The wealth distribution model is a representation of where the wealth in 
+ *	a society is distributed, and how this wealth distribution changes 
+ *	over time.
+ *	This program creates 3 csv files in the directori Matlab, the files are 
+ *	called poor.csv, middle.csv and rich.csv. 
+ *	Each file contains the number if poor, middle and rich people between 
+ *	each tick.
+ *	The program accept initial parameters for: 
+ *	#People                 (2-1000) Number of people in the simulation
+ *	#vision_max  			(1-15) Max range in one person vision
+ *	#life_expectancy_min 	(1-100) Min ticks a person will live   
+ *	#life_expectancy_max 	(1-100) Max ticks a person can live 
+ *	#percent_best_land 		(5% - 25%) Porcentage of land with many grains
+ *	#grain_grow_interval 	(1-10) How often grain grows
+ *	#num_grain_grown        (1-10) How much grain is grown each time
+ *	#Ticks_to_Run			(0 - ...) Amount of ticks in the simulation
  *
- *  % java Test
- *  Test, Test
+ *	Example with default parameters:
+ *  % java Main
+ *	Running with default parameters ... 
+ *	Setting up grains on the grid
+ * 	Locating starting point of people on the grid
+ *	Running simulation...
+ *	Simulation completed. Saving...
+ *	Files with the amount of poor, middle, and rich have been created, plot 
+ *  with Matlab with the script in Matlab/wealthPlot.m
+ *  
  *
- *  These 17 lines of text are comments. They are not part of the program;
- *  they serve to remind us about its properties. The first two lines tell
- *  us what to type to compile and test the program. The next line describes
- *  the purpose of the program. The next few lines give a sample execution
- *  of the program and the resulting output. We will always include such 
- *  lines in our programs and encourage you to do the same.
+ *	Example with user defined parameters:
+ *	% java Main 250 5 15 1 83 10 4 10 1000
+ *	Running with parameters defined by user..
+ *	Setting up grains on the grid
+ *	Locating starting point of people on the grid
+ *	Running simulation...
+ *	Simulation completed. Saving...
+ *	Files with the amount of poor, middle, and rich have been created, plot 
+ *	with Matlab with the script in Matlab/wealthPlot.m
  *
  *************************************************************************/
 import java.io.*;
+
+
 public class Main {
+/* This class is the main program, get parameters from the user, or use 
+* 	defalt ones to run the simulation.
+*/
+
+
 	public static int PEOPLE;
 	public static int ticks = 0;
 	public static int numOfTicks = 0;
@@ -26,27 +64,16 @@ public class Main {
 	public static double percent_best_land;
 	public static int grain_grow_interval;
 
-	public static Location[][] all_Location; 
-	public static Person[] all_People; 
-	public static int NUM_COLUMNS = 50;
+	public static Location[][] all_Location; 	// 2D array with all locations
+	public static Person[] all_People; 			// array of people
+	public static int NUM_COLUMNS = 50;			// Size of the grid
 	public static int NUM_ROWS = 50;
-	public static double DIFFUSE_PERCENT = 25;
-	/*
-	public static int num_people = 0;			/* Amount of people. /
-	public static int max_vision			Max value of distance.
-	metabolism_max		Max amount of metabolism.
-	life_expectancy_min		
-	life_expectancy_max
-	percent_best_land		Percentage of land that has max-grain.
-	grain_growth_interval	How often grain grows.
-	num_grains_grown		How much grain is grown each interval.
-	richest_wealth		The value on wealth for the richest person.
-	poorest_wealth		The value of wealth for the purest person.
+	public static double DIFFUSE_PERCENT = 25;	// use to difuse grains 
+												// depending on best land
 
-	*/
 
     public static void main(String[] args) {
-    	if (args.length ==  0) {
+    	if (args.length ==  0) { // If no parameters are defined use default
     		System.out.println((char)27 + "[32mRunning with default "+
     									   "parameters ... "+ (char)27 + "[0m");
 
@@ -63,7 +90,9 @@ public class Main {
 			numOfTicks = 1000;
 
     	} else{
-    		if (args.length == 9){
+    		if (args.length == 9){ 
+    			// Use defined parameters
+
     			System.out.println((char)27 + "[31mRunning with parameters "+
     									 "defined by user.."+ (char)27 + "[0m");
 
@@ -78,33 +107,47 @@ public class Main {
 				Location.num_grain_grown = Integer.parseInt(args[7]);		
 
 				numOfTicks = Integer.parseInt(args[8]);
-    		}else{
+    		}else{ 
+    			// There are some defined parameters but no complete
+
     			System.out.println((char)27 + "[31mError in the number of "+
     				                           "parameters" + (char)27 + "[0m");
     			
-    			System.out.println("Use java Main #People #vision_max "+ 
-    				"#life_expectancy_min #life_expectancy_max "+
-    				"#percent_best_land #grain_grow_interval + #Ticks_to_Run ");
+    			System.out.println("Use java Main #People #vision_max "+
+    			   "#metabolism_max #life_expectancy_min #life_expectancy_max "+
+    			   "#percent_best_land #grain_grow_interval "+
+    			   "#num_grain_grown #Ticks_to_Run ");
     			return;
     		}
     	}
 
-	
+		// Preparing the grid 
 		System.out.println("Setting up grains on the grid");
 		setupLocations(NUM_COLUMNS, NUM_ROWS);
+
+		// Add person to the grid
 		System.out.println("Locating starting point of people on the grid");
 		setupPersons(PEOPLE);
 
 
+		// Used to save in a file
+
 		String strPoor="";
 		String strMiddle="";
 		String strRich="";
-		String max="";
+
+
 	
 		System.out.println("Running simulation..."); 
 
 		for (int i =0;i<numOfTicks;i++){
-    		update();
+			// This is the main loop to run the simulation
+
+    		update(); // update the simulation
+    		
+    		// the code next count the amount of Rich, middle and poor people
+    		// after each tick
+
     		int rich = 0;
 			int poor = 0;
 			int middle = 0;
@@ -119,6 +162,8 @@ public class Main {
 	    			poor++;
 	    		}
 	    	}
+	    	// Add the values for each tick
+
 	    	strPoor += poor + ",";
 			strMiddle += middle + ",";
 			strRich += rich + ",";
@@ -126,6 +171,8 @@ public class Main {
 
     	System.out.println((char)27 + "[32mSimulation completed. Saving..."+
     		(char)27 + "[0m"); 
+
+    	//Saving the files
 
 		savetoFile(strPoor.substring(0, strPoor.length()-1), "poor");
 		savetoFile(strMiddle.substring(0, strMiddle.length()-1), "middle");
@@ -135,9 +182,14 @@ public class Main {
 			    "middle, and rich have been created, plot with Matlab with "+
 			    "the script Matlab/wealthPlot.m"+(char)27 + "[0m"); 
 
+		//Program End
     }
 
     public static void savetoFile(String text, String name){
+    // This method save a string into a file located in Matlab/ directory
+    //	text -> string to save
+    //	name -> file name
+
     	try {
             File file = new File("Matlab/"+name+".csv");
             BufferedWriter output = new BufferedWriter(new FileWriter(file));
@@ -150,19 +202,40 @@ public class Main {
 
 
     public static void update(){
+    // rules to update for each tick
+    	// First each person look around for the direction to move next
+    	// depending of the vision.
     	for(Person p: all_People){
 	    	p.updateLocation(all_Location);
 	    }
+
+	   	// Check for all locations and repart the grains on each one
+	   	// if no person is in the location keep the number of grains
+	   	// if more than one person is in the location the grains are 
+	   	// distributed evenly 
+
     	for(int i = 0 ; i < NUM_COLUMNS ; i++){
 	    	for(int j = 0 ; j < NUM_ROWS ; j++){
 	      		all_Location[i][j].harvest();
 	    	} 
 	    } 
+
+	    // Check if people are alive and move them, if death reset inital
+	    // parameters
+
 	    for(Person p: all_People){
 	    	p.Update();
 	    }
 
+	    // Update the class of each person, determining poor, middle and rich
+	    // by finding the richest person, if eople have less then 1/3 of 
+	    // these valu, they are poor, if they own between 1/3 and 2/3 of the
+	    // riches, they are middle, and more than 2/3 are rich.
+
 	    Person.updateClass(all_People);
+
+	    // grow grains on the land depending of the frecuency defined by 
+	    // grain_grow_interval.
 
 	    if (( ticks % grain_grow_interval) == 0){
 			for(int i = 0 ; i < NUM_COLUMNS ; i++){
@@ -171,12 +244,16 @@ public class Main {
 	    		} 
 	    	}
 		}
+
+		// update the number of ticks
 		ticks = ticks + 1;
 	}
 
 
 
 	public static void setupPersons(int numPeople ){
+	// This method create persons and add them to an array
+	// after creating them locate them on the grid randomly
     	
     	all_People = new Person[numPeople];
 
@@ -187,14 +264,13 @@ public class Main {
 	    for(Person p: all_People){
 	    	p.col = randomInt(0,NUM_COLUMNS-1);
 	    	p.row = randomInt(0,NUM_ROWS-1);
-	    	//System.out.println(randCol +", "+randRow ); 
 	    }
 	}
 
     public static void setupLocations ( int col, int row ){
     	// This function starts a new 2D array of locations 
-    	// Create new object for each locaitn and
-    	// disperse grains over this locations. 
+    	// Create new object for each location and
+    	// disperse grains over the grid. 
 
     	all_Location = new Location[col][row];  
 	    for(int i = 0 ; i < col ; i++){
@@ -208,7 +284,9 @@ public class Main {
 
 
 	public static void spreadGrains (int col, int row){
-		// This function spread grains on locations
+		// This function spread grains on locations by giving a max_grain 
+		// value for each location, all locations are full of grains in the 
+		// start.
 		// Depending on the variable percent_best_land the amount
 		// of locations is determinated as "best Land"
 		// from this best land, the grains are diffused around.
@@ -227,7 +305,7 @@ public class Main {
 	    }
 
 	    // From the "best area" we take some grains (DIFFUSE_PERCENT) and 
-	    // spred them on the neighbors 
+	    // spred them on the 8 neighbors 
 
 	    for (int t = 0; t<5; t++){
 		    for(int i = 0 ; i < col ; i++){
@@ -268,6 +346,7 @@ public class Main {
 
     public static void addToNeighbors (int col, int row , double grains){
     	// Add the value of grains to the 8 neighbors 
+
     	// Right, 
     	all_Location[moveColRight(col,1)][row].grains_here += grains;
     	// Left
@@ -309,6 +388,9 @@ public class Main {
 	// This funcition help to evaluate the next location starting from a 
 	// defined one.
 
+	// This methods are used when look for the next location and when
+	// diffusing the grains on each location
+
     public static int moveColRight(int col, int steps){
     	if ((col + steps) >= NUM_COLUMNS){
     		return moveColRight( 0, ((col + steps) - NUM_COLUMNS));
@@ -345,12 +427,14 @@ public class Main {
 
 	public static int randomInt( int min, int max){
 		// Return a reandom int within the limits min-max
+
         int range = max-min;
         return (int)(Math.random()*(range+1)+min);
     }
 
     public static void printAllLocations(){
     	// print the value of grains in a grid.
+    	// Use for testing
 		System.out.println("-----------------------------"); 
 		String oneRow ="";
 		int number;
@@ -368,7 +452,8 @@ public class Main {
 	}
 	public static void printAllPersons(){
     	// print the value of wealth of all persons.
-		
+		// use for testing.
+
 		for(Person p: all_People){
 	    	System.out.println("Wealth: "+p.wealth ); 
 	    }
