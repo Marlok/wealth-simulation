@@ -15,14 +15,9 @@ The program accept initial parameters for:
 
  *	#People                 (2-1000) Number of people in the simulation
  *	#vision_max  			(1-15) Max range in one person vision
-<<<<<<< HEAD
- *	#life_expectancy_min 	(1-100) Min ticks a person will live
- *	#life_expectancy_max 	(1-100) Max ticks a person can live
-=======
  *  #metabolism_max			(1 - 25) Max value of metabolism
  *	#life_expectancy_min 	(1-100) Min ticks a person will live   
  *	#life_expectancy_max 	(1-100) Max ticks a person can live 
->>>>>>> origin/master
  *	#percent_best_land 		(5% - 25%) Porcentage of land with many grains
  *	#grain_grow_interval 	(1-10) How often grain grows
  *	#num_grain_grown        (1-10) How much grain is grown each time
@@ -33,9 +28,11 @@ File list
 ------------
  * 	makefile			Compile all the needed classes to use
  *	Main.jave			Main model
- *	Location.java	Class with methods and information for each location
- *	Person.java		Class with methods and information for each person
-
+ *	Location.java	    Class with methods and information for each location
+ *	Person.java		    Class with methods and information for each person
+ * 	WealthPlot.m 		Matlab code to plot changes on class on ticks
+ * 	Experiment1.m       Matlab code to run and plot experiment 1  
+ * 	Experiment2.m       Matlab code to run and plot experiment 2  
 
 Program can be built using
 ------------
@@ -54,6 +51,19 @@ Program is run with
  										#grain_grow_interval #Ticks_to_Run
 
  % java Main 250 5 15 1 83 10 4 10 1000
+
+Plot csv files 
+------------
+
+In the Directory Matlab included is a file WealthPlot.m to plot changes on class
+on ticks. To run this script, In Matlab locate the directory and run the script.
+
+
+Experiment are run in Matlab to show plots
+------------
+To run experiment first compile the files and then run  Experiment1.m or
+Experiment2.m  with Matlab.
+
 
 
 ------------
