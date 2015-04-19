@@ -15,8 +15,14 @@ The program accept initial parameters for:
 
  *	#People                 (2-1000) Number of people in the simulation
  *	#vision_max  			(1-15) Max range in one person vision
+<<<<<<< HEAD
  *	#life_expectancy_min 	(1-100) Min ticks a person will live
  *	#life_expectancy_max 	(1-100) Max ticks a person can live
+=======
+ *  #metabolism_max			(1 - 25) Max value of metabolism
+ *	#life_expectancy_min 	(1-100) Min ticks a person will live   
+ *	#life_expectancy_max 	(1-100) Max ticks a person can live 
+>>>>>>> origin/master
  *	#percent_best_land 		(5% - 25%) Porcentage of land with many grains
  *	#grain_grow_interval 	(1-10) How often grain grows
  *	#num_grain_grown        (1-10) How much grain is grown each time
